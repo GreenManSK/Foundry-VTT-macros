@@ -62,10 +62,11 @@
             $form.find("input[name='randomize']").on('click', async () => {
                 const raceValue = $form.find('[name="race"]').val();
                 const genderValue = $form.find('[name="gender"]').val();
-                const newImage = await chooseImage(raceValue, genderValue);
-                console.log(newImage);
-                const tok = canvas.tokens.controlled[0];
-                const updates = [{ _id: tok.id, img: newImage }];
+                const updates = [];
+                await Promise.all(canvas.tokens.controlled.map(async (token) => {
+                    const newImage = await chooseImage(raceValue, genderValue);
+                    updates.push({ _id: token.id, img: newImage })
+                }));
                 canvas.scene.updateEmbeddedDocuments('Token', updates);
             });
         }
